@@ -1,4 +1,5 @@
 locals {
+  redshift_route_table_ids = aws_route_table.redshift[*].id
   public_route_table_ids   = aws_route_table.public[*].id
   private_route_table_ids  = aws_route_table.private[*].id
 }
@@ -208,6 +209,216 @@ output "private_network_acl_arn" {
   value       = try(aws_network_acl.private[0].arn, null)
 }
 
+################################################################################
+# Outpost Subnets
+################################################################################
+
+output "outpost_subnets" {
+  description = "List of IDs of outpost subnets"
+  value       = aws_subnet.outpost[*].id
+}
+
+output "outpost_subnet_arns" {
+  description = "List of ARNs of outpost subnets"
+  value       = aws_subnet.outpost[*].arn
+}
+
+output "outpost_subnets_cidr_blocks" {
+  description = "List of cidr_blocks of outpost subnets"
+  value       = compact(aws_subnet.outpost[*].cidr_block)
+}
+
+output "outpost_subnets_ipv6_cidr_blocks" {
+  description = "List of IPv6 cidr_blocks of outpost subnets in an IPv6 enabled VPC"
+  value       = compact(aws_subnet.outpost[*].ipv6_cidr_block)
+}
+
+output "outpost_network_acl_id" {
+  description = "ID of the outpost network ACL"
+  value       = try(aws_network_acl.outpost[0].id, null)
+}
+
+output "outpost_network_acl_arn" {
+  description = "ARN of the outpost network ACL"
+  value       = try(aws_network_acl.outpost[0].arn, null)
+}
+
+################################################################################
+# Database Subnets
+################################################################################
+
+output "database_subnets" {
+  description = "List of IDs of database subnets"
+  value       = aws_subnet.database[*].id
+}
+
+output "database_subnet_arns" {
+  description = "List of ARNs of database subnets"
+  value       = aws_subnet.database[*].arn
+}
+
+output "database_subnets_cidr_blocks" {
+  description = "List of cidr_blocks of database subnets"
+  value       = compact(aws_subnet.database[*].cidr_block)
+}
+
+output "database_subnets_ipv6_cidr_blocks" {
+  description = "List of IPv6 cidr_blocks of database subnets in an IPv6 enabled VPC"
+  value       = compact(aws_subnet.database[*].ipv6_cidr_block)
+}
+
+output "database_subnet_group" {
+  description = "ID of database subnet group"
+  value       = try(aws_db_subnet_group.database[0].id, null)
+}
+
+output "database_subnet_group_name" {
+  description = "Name of database subnet group"
+  value       = try(aws_db_subnet_group.database[0].name, null)
+}
+
+output "database_route_table_ids" {
+  description = "List of IDs of database route tables"
+  value       = try(coalescelist(aws_route_table.database[*].id, local.private_route_table_ids), [])
+}
+
+output "database_internet_gateway_route_id" {
+  description = "ID of the database internet gateway route"
+  value       = try(aws_route.database_internet_gateway[0].id, null)
+}
+
+output "database_nat_gateway_route_ids" {
+  description = "List of IDs of the database nat gateway route"
+  value       = aws_route.database_nat_gateway[*].id
+}
+
+output "database_ipv6_egress_route_id" {
+  description = "ID of the database IPv6 egress route"
+  value       = try(aws_route.database_ipv6_egress[0].id, null)
+}
+
+output "database_route_table_association_ids" {
+  description = "List of IDs of the database route table association"
+  value       = aws_route_table_association.database[*].id
+}
+
+output "database_network_acl_id" {
+  description = "ID of the database network ACL"
+  value       = try(aws_network_acl.database[0].id, null)
+}
+
+output "database_network_acl_arn" {
+  description = "ARN of the database network ACL"
+  value       = try(aws_network_acl.database[0].arn, null)
+}
+
+################################################################################
+# Redshift Subnets
+################################################################################
+
+output "redshift_subnets" {
+  description = "List of IDs of redshift subnets"
+  value       = aws_subnet.redshift[*].id
+}
+
+output "redshift_subnet_arns" {
+  description = "List of ARNs of redshift subnets"
+  value       = aws_subnet.redshift[*].arn
+}
+
+output "redshift_subnets_cidr_blocks" {
+  description = "List of cidr_blocks of redshift subnets"
+  value       = compact(aws_subnet.redshift[*].cidr_block)
+}
+
+output "redshift_subnets_ipv6_cidr_blocks" {
+  description = "List of IPv6 cidr_blocks of redshift subnets in an IPv6 enabled VPC"
+  value       = compact(aws_subnet.redshift[*].ipv6_cidr_block)
+}
+
+output "redshift_subnet_group" {
+  description = "ID of redshift subnet group"
+  value       = try(aws_redshift_subnet_group.redshift[0].id, null)
+}
+
+output "redshift_route_table_ids" {
+  description = "List of IDs of redshift route tables"
+  value       = length(local.redshift_route_table_ids) > 0 ? local.redshift_route_table_ids : (var.enable_public_redshift ? local.public_route_table_ids : local.private_route_table_ids)
+}
+
+output "redshift_route_table_association_ids" {
+  description = "List of IDs of the redshift route table association"
+  value       = aws_route_table_association.redshift[*].id
+}
+
+output "redshift_public_route_table_association_ids" {
+  description = "List of IDs of the public redshift route table association"
+  value       = aws_route_table_association.redshift_public[*].id
+}
+
+output "redshift_network_acl_id" {
+  description = "ID of the redshift network ACL"
+  value       = try(aws_network_acl.redshift[0].id, null)
+}
+
+output "redshift_network_acl_arn" {
+  description = "ARN of the redshift network ACL"
+  value       = try(aws_network_acl.redshift[0].arn, null)
+}
+
+################################################################################
+# Elasticache Subnets
+################################################################################
+
+output "elasticache_subnets" {
+  description = "List of IDs of elasticache subnets"
+  value       = aws_subnet.elasticache[*].id
+}
+
+output "elasticache_subnet_arns" {
+  description = "List of ARNs of elasticache subnets"
+  value       = aws_subnet.elasticache[*].arn
+}
+
+output "elasticache_subnets_cidr_blocks" {
+  description = "List of cidr_blocks of elasticache subnets"
+  value       = compact(aws_subnet.elasticache[*].cidr_block)
+}
+
+output "elasticache_subnets_ipv6_cidr_blocks" {
+  description = "List of IPv6 cidr_blocks of elasticache subnets in an IPv6 enabled VPC"
+  value       = compact(aws_subnet.elasticache[*].ipv6_cidr_block)
+}
+
+output "elasticache_subnet_group" {
+  description = "ID of elasticache subnet group"
+  value       = try(aws_elasticache_subnet_group.elasticache[0].id, null)
+}
+
+output "elasticache_subnet_group_name" {
+  description = "Name of elasticache subnet group"
+  value       = try(aws_elasticache_subnet_group.elasticache[0].name, null)
+}
+
+output "elasticache_route_table_ids" {
+  description = "List of IDs of elasticache route tables"
+  value       = try(coalescelist(aws_route_table.elasticache[*].id, local.private_route_table_ids), [])
+}
+
+output "elasticache_route_table_association_ids" {
+  description = "List of IDs of the elasticache route table association"
+  value       = aws_route_table_association.elasticache[*].id
+}
+
+output "elasticache_network_acl_id" {
+  description = "ID of the elasticache network ACL"
+  value       = try(aws_network_acl.elasticache[0].id, null)
+}
+
+output "elasticache_network_acl_arn" {
+  description = "ARN of the elasticache network ACL"
+  value       = try(aws_network_acl.elasticache[0].arn, null)
+}
 
 ################################################################################
 # Intra Subnets
