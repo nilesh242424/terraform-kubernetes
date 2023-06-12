@@ -2,7 +2,7 @@
 
 Terraform module which creates VPC resources on AWS.
 
-[![SWUbanner]](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
+(https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ## Usage
 
