@@ -1,0 +1,2 @@
+variable alarmActions {}
+variable okActions {}
